@@ -6,6 +6,10 @@
 
 **FlipCut Studio** is a cloud-native image processing suite that automates background removal and aesthetic mirroring. Built with a focus on clean architecture and type safety, it provides a seamless REST API for transforming assets and a modern dashboard for managing your creative gallery.
 
+Live Link: https://pic-flip-studio.vercel.app
+
+Live Demo Video: https://drive.google.com/file/d/1s6X6Yxb3PVIGetiVWYdFWP51j5a2DST6/view?usp=sharing
+
 ## ✨ Features
 
 - **Smart Isolation**: Instantly removes complex backgrounds using AI (via Remove.bg).
