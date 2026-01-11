@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { uploadImage, ImageData } from '../services/api';
+import { uploadImage, ImageData, FlipDirection } from '../services/api';
 
 interface ImageUploadProps {
   onUploadSuccess: (image: ImageData) => void;
@@ -10,6 +10,7 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [flipDirection, setFlipDirection] = useState<FlipDirection>('horizontal');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileSelect = async (file: File) => {
@@ -39,7 +40,7 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
         });
       }, 200);
 
-      const response = await uploadImage(file);
+      const response = await uploadImage(file, flipDirection);      
       clearInterval(progressInterval);
       setUploadProgress(100);
 
@@ -81,14 +82,49 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
     if (file) {
       handleFileSelect(file);
     }
+
+    e.target.value = '';
   };
 
   const handleClick = () => {
     fileInputRef.current?.click();
   };
 
+  const FlipOption = ({ value, label, icon }: { value: FlipDirection, label: string, icon: React.ReactNode }) => (
+    <button
+      onClick={(e) => { e.stopPropagation(); setFlipDirection(value); }}
+      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
+        ${flipDirection === value 
+          ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300' 
+          : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+        }`}
+    >
+      {icon}
+      {label}
+    </button>
+  );
+
   return (
-    <div className="w-full">
+    <div className="w-full space-y-6">
+      {/* Flip Options Selection */}
+      <div className="flex flex-wrap justify-center gap-3" onClick={(e) => e.stopPropagation()}>
+        <FlipOption 
+          value="horizontal" 
+          label="Horizontal" 
+          icon={<span className="text-lg">↔️</span>} 
+        />
+        <FlipOption 
+          value="vertical" 
+          label="Vertical" 
+          icon={<span className="text-lg">↕️</span>} 
+        />
+        <FlipOption 
+          value="both" 
+          label="Both" 
+          icon={<span className="text-lg">🔄</span>} 
+        />
+      </div>
+
       <div
         className={`
           border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all duration-300
@@ -116,31 +152,20 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
             </div>
             <div>
               <p className="text-lg font-medium text-gray-700">Processing image...</p>
-              <p className="text-sm text-gray-500 mt-2">Removing background and flipping</p>
+              <p className="text-sm text-gray-500 mt-2">Removing background and applying {flipDirection} flip</p>
               <div className="mt-4 w-full bg-gray-200 rounded-full h-3">
                 <div
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-300 shadow-sm"
                   style={{ width: `${uploadProgress}%` }}
                 ></div>
               </div>
-              <p className="text-xs text-gray-500 mt-2">{uploadProgress}%</p>
             </div>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="flex justify-center">
-              <svg
-                className="w-20 h-20 text-blue-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                />
+              <svg className="w-20 h-20 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
               </svg>
             </div>
             <div>
@@ -148,7 +173,7 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
                 Drag and drop an image here, or click to select
               </p>
               <p className="text-sm text-gray-500 mt-3">
-                Supports JPG, PNG, GIF, and other image formats (max 10MB)
+                Selected Mode: <span className="font-bold text-blue-600 capitalize">{flipDirection} Flip</span>
               </p>
             </div>
           </div>
@@ -157,4 +182,3 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
     </div>
   );
 }
-

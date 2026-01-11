@@ -5,12 +5,12 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 const REMOVE_BG_API_URL = 'https://api.remove.bg/v1.0/removebg';
+export type FlipDirection = 'horizontal' | 'vertical' | 'both'
 
 /**
  * Removes background from image using Remove.bg API
  */
 export async function removeBackground(imageBuffer: Buffer): Promise<Buffer> {
-  
   if (!process.env.REMOVE_BG_API_KEY) {
     dotenv.config({ path: path.resolve(__dirname, '../../.env') });
   }
@@ -53,29 +53,35 @@ export async function removeBackground(imageBuffer: Buffer): Promise<Buffer> {
 }
 
 /**
- * Horizontally flips an image
+ * Flips image based on direction
  */
-export async function mirrorImage(imageBuffer: Buffer): Promise<Buffer> {
+export async function flipImage(imageBuffer: Buffer, direction: FlipDirection): Promise<Buffer> {
   try {
-    const flippedImage = await sharp(imageBuffer)
-      .flop() // Horizontal flip
-      .toBuffer();
-    
-    return flippedImage;
+    let pipeline = sharp(imageBuffer);
+
+  if (direction === 'horizontal' || direction === 'both') {
+    pipeline = pipeline.flop();
+  }
+
+  if (direction === 'vertical' || direction === 'both') {
+    pipeline = pipeline.flip();
+  }
+
+  return await pipeline.toBuffer();
   } catch (error: any) {
     throw new Error(`Failed to flip image: ${error.message}`);
   }
 }
 
 /**
- * Processes image: removes background and flips horizontally
+ * Processes image: removes background and applies requested flip
  */
-export async function processImage(imageBuffer: Buffer): Promise<Buffer> {
+export async function processImage(imageBuffer: Buffer, flipDirection: FlipDirection = 'horizontal'): Promise<Buffer> {
   // Step 1: Remove background
   const backgroundRemoved = await removeBackground(imageBuffer);
-  // Step 2: Flip horizontally
-  const flipped = await mirrorImage(backgroundRemoved);
   
-  return flipped;
+  // Step 2: Apply requested flip
+  const processed = await flipImage(backgroundRemoved, flipDirection);
+  
+  return processed;
 }
-

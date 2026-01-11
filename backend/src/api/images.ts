@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import multer from 'multer';
-import { processImage } from '../core/transformer';
+import { processImage, FlipDirection } from '../core/transformer';
 import { uploadImageToStorage, uploadOriginalImageToStorage, deleteImageFromStorage } from '../core/bucket';
 import { saveImageMetadata, deleteImageMetadata, getImageMetadata, getAllImages } from '../core/database';
 
@@ -34,21 +34,19 @@ router.post('/upload', upload.single('image'), async (req: Request, res: Respons
 
     const imageBuffer = req.file.buffer;
     const originalFilename = req.file.originalname;
+    const flipDirection = (req.body.flipDirection as FlipDirection) || 'horizontal';
 
     // Upload original image first
     const { path: originalStoragePath, publicUrl: originalPublicUrl } = 
       await uploadOriginalImageToStorage(imageBuffer, originalFilename);
 
-    // Process image (remove background + flip)
-    const processedImage = await processImage(imageBuffer);
+    const processedImage = await processImage(imageBuffer, flipDirection);
 
-    // Upload processed image to Supabase Storage
     const { path: storagePath, publicUrl } = await uploadImageToStorage(
       processedImage,
       originalFilename
     );
 
-    // Save metadata to database
     const imageRecord = await saveImageMetadata(
       originalFilename,
       storagePath,
@@ -173,4 +171,3 @@ router.delete('/:id', async (req: Request, res: Response) => {
 });
 
 export default router;
-

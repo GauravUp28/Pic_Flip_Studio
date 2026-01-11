@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+export type FlipDirection = 'horizontal' | 'vertical' | 'both' | 'none';
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 export interface ImageData {
@@ -33,11 +34,12 @@ const api = axios.create({
 });
 
 /**
- * Upload an image for processing
+ * Upload an image for processing with flip direction
  */
-export async function uploadImage(file: File): Promise<UploadResponse> {
+export async function uploadImage(file: File, flipDirection: FlipDirection = 'horizontal'): Promise<UploadResponse> {
   const formData = new FormData();
   formData.append('image', file);
+  formData.append('flipDirection', flipDirection);
 
   const response = await api.post<UploadResponse>('/api/images/upload', formData, {
     headers: {
