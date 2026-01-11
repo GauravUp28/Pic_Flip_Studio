@@ -123,6 +123,11 @@ export default function ImageUpload({ onUploadSuccess, onError }: ImageUploadPro
           label="Both" 
           icon={<span className="text-lg">🔄</span>} 
         />
+        <FlipOption 
+          value="none" 
+          label="None" 
+          icon={<span className="text-lg">🚫</span>} 
+        />
       </div>
 
       <div

@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import path from 'path';
 
 const REMOVE_BG_API_URL = 'https://api.remove.bg/v1.0/removebg';
-export type FlipDirection = 'horizontal' | 'vertical' | 'both'
+export type FlipDirection = 'horizontal' | 'vertical' | 'both' | 'none';
 
 /**
  * Removes background from image using Remove.bg API
@@ -57,17 +57,22 @@ export async function removeBackground(imageBuffer: Buffer): Promise<Buffer> {
  */
 export async function flipImage(imageBuffer: Buffer, direction: FlipDirection): Promise<Buffer> {
   try {
+    // If direction is 'none', we return the buffer immediately without sharp processing
+    if (direction === 'none') {
+      return imageBuffer;
+    }
+
     let pipeline = sharp(imageBuffer);
 
-  if (direction === 'horizontal' || direction === 'both') {
-    pipeline = pipeline.flop();
-  }
-
-  if (direction === 'vertical' || direction === 'both') {
-    pipeline = pipeline.flip();
-  }
-
-  return await pipeline.toBuffer();
+    if (direction === 'horizontal' || direction === 'both') {
+      pipeline = pipeline.flop(); // Horizontal flip
+    }
+    
+    if (direction === 'vertical' || direction === 'both') {
+      pipeline = pipeline.flip(); // Vertical flip
+    }
+    
+    return await pipeline.toBuffer();
   } catch (error: any) {
     throw new Error(`Failed to flip image: ${error.message}`);
   }
@@ -80,7 +85,7 @@ export async function processImage(imageBuffer: Buffer, flipDirection: FlipDirec
   // Step 1: Remove background
   const backgroundRemoved = await removeBackground(imageBuffer);
   
-  // Step 2: Apply requested flip
+  // Step 2: Apply requested flip (or skip if 'none')
   const processed = await flipImage(backgroundRemoved, flipDirection);
   
   return processed;
