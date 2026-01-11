@@ -1,10 +1,10 @@
-# FlipCut Studio
+# PicFlip Studio
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?logo=typescript)
 ![React](https://img.shields.io/badge/React-18.0-61DAFB?logo=react)
 
-**FlipCut Studio** is a cloud-native image processing suite that automates background removal and aesthetic mirroring. Built with a focus on clean architecture and type safety, it provides a seamless REST API for transforming assets and a modern dashboard for managing your creative gallery.
+**PicFlip Studio** is a cloud-native image processing suite that automates background removal and aesthetic mirroring. Built with a focus on clean architecture and type safety, it provides a seamless REST API for transforming assets and a modern dashboard for managing your creative gallery.
 
 Live Link: https://pic-flip-studio.vercel.app
 
