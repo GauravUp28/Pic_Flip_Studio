@@ -131,4 +131,4 @@ frontend/src/
 2. Set VITE_API_URL to your live backend URL (e.g., https://api.flipcut.com).
 3. Deploy.
 
-Built with ❤️ by Gaurav Upadhyay
+Built with ❤️ by [Gaurav Upadhyay](https://github.com/GauravUp28) and [Akanksha Achukola](https://github.com/achukola)
