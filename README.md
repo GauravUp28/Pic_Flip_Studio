@@ -13,7 +13,7 @@ Live Demo Video: https://drive.google.com/file/d/1s6X6Yxb3PVIGetiVWYdFWP51j5a2DS
 ## ✨ Features
 
 - **Smart Isolation**: Instantly removes complex backgrounds using AI (via Remove.bg).
-- **Auto-Mirror**: Automatically applies horizontal flipping for compositional balance.
+- **Creative Flip Control**: Choose between Horizontal, Vertical, Both, or No flip modes to achieve the perfect composition.
 - **Cloud Vault**: Securely stores optimized assets using Supabase Storage.
 - **Modern UI**: A responsive, drag-and-drop interface built with React and Tailwind.
 - **Type-Safe**: End-to-end type safety from database to frontend.
